@@ -52,10 +52,10 @@ svg {
   width: 80%;
   border-top-right-radius: 1rem;
   border-top-left-radius: 1rem;
-  transform: translateY(100px);
+  transform: translateY(0px);
   transition: all 0.5s ease-in-out;
-  pointer-events: none;
-  opacity: 0;
+  pointer-events: all;
+  opacity: 1;
 }
 
 .adjust-center.active {
@@ -120,4 +120,20 @@ svg {
   cursor: pointer;
   border: none;
   margin: 2rem 0rem;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  margin: 1rem 0rem;
+  border-radius: 1rem;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: rgb(119, 115, 115);
+  margin-top: -4px;
 }
