@@ -1,7 +1,14 @@
 //Variables
 let colorDivs = document.querySelectorAll(".color");
+let sliders = document.querySelectorAll(".adjust-center");
 
 //Event Listeners
+
+sliders.forEach(slider => {
+  slider.addEventListener("input", e => {
+    changeColorSilder(e.target);
+  });
+});
 
 //Functions
 
@@ -61,6 +68,31 @@ function checkDarkness(color, text) {
   } else {
     text.style.color = "white";
   }
+}
+
+function changeColorSilder(target) {
+  let divIndex =
+    target.getAttribute("data-hue") ||
+    target.getAttribute("data-sat") ||
+    target.getAttribute("data-bright");
+
+  let colorDiv = colorDivs[divIndex];
+  let currentColor = colorDiv.querySelector("h2").innerText;
+  let inputs = colorDiv.querySelectorAll("input[type='range']");
+
+  let hue = inputs[0].value;
+  let brightness = inputs[1].value;
+  let saturation = inputs[2].value;
+
+  console.log(hue, brightness, saturation);
+
+  let newColor = chroma(currentColor)
+    .set("hsl.h", hue)
+    .set("hsl.s", saturation)
+    .set("hsl.l", brightness);
+
+  console.log(newColor);
+  colorDiv.style.backgroundColor = newColor;
 }
 
 setColor();
