@@ -10,6 +10,12 @@ sliders.forEach(slider => {
   });
 });
 
+colorDivs.forEach((colorDiv, index) => {
+  colorDiv.addEventListener("change", () => {
+    updateTextUI(index);
+  });
+});
+
 //Functions
 
 function genreateColor() {
@@ -26,6 +32,12 @@ function setColor() {
     colorDiv.style.backgroundColor = randomColor;
 
     hexText.innerHTML = randomColor;
+    let icons = colorDiv.querySelectorAll(".controls div");
+
+    for (icon of icons) {
+      checkDarkness(randomColor, icon);
+    }
+
     checkDarkness(randomColor, hexText);
 
     let color = chroma(randomColor);
@@ -84,15 +96,25 @@ function changeColorSilder(target) {
   let brightness = inputs[1].value;
   let saturation = inputs[2].value;
 
-  console.log(hue, brightness, saturation);
-
   let newColor = chroma(currentColor)
     .set("hsl.h", hue)
     .set("hsl.s", saturation)
     .set("hsl.l", brightness);
 
-  console.log(newColor);
   colorDiv.style.backgroundColor = newColor;
+}
+
+function updateTextUI(index) {
+  let header = colorDivs[index].querySelector("h2");
+  let icons = colorDivs[index].querySelectorAll(".controls div");
+  let color = chroma(colorDivs[index].style.backgroundColor);
+
+  header.innerText = color.hex();
+
+  checkDarkness(color, header);
+  for (icon of icons) {
+    checkDarkness(color, icon);
+  }
 }
 
 setColor();
