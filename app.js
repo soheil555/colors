@@ -1,7 +1,7 @@
 //Variables
 let colorDivs = document.querySelectorAll(".color");
 let sliders = document.querySelectorAll(".adjust-center");
-
+let initialColors;
 //Event Listeners
 
 sliders.forEach(slider => {
@@ -17,14 +17,9 @@ colorDivs.forEach((colorDiv, index) => {
 });
 
 //Functions
-
-function genreateColor() {
-  let randomColor = chroma.random();
-
-  return randomColor;
-}
-
 function setColor() {
+  initialColors = [];
+
   colorDivs.forEach(colorDiv => {
     let hexText = colorDiv.children[0];
 
@@ -43,12 +38,21 @@ function setColor() {
     let color = chroma(randomColor);
     let inputs = colorDiv.querySelectorAll("input");
 
+    initialColors.push(color.hex());
+
     let hue = inputs[0];
     let brightness = inputs[1];
     let saturation = inputs[2];
 
     setAdjust(color, hue, brightness, saturation);
+    updateScroll(color, hue, brightness, saturation);
   });
+}
+
+function genreateColor() {
+  let randomColor = chroma.random();
+
+  return randomColor;
 }
 
 function setAdjust(color, hue, brightness, saturation) {
@@ -89,19 +93,21 @@ function changeColorSilder(target) {
     target.getAttribute("data-bright");
 
   let colorDiv = colorDivs[divIndex];
-  let currentColor = colorDiv.querySelector("h2").innerText;
+  let currentColor = initialColors[divIndex];
   let inputs = colorDiv.querySelectorAll("input[type='range']");
 
-  let hue = inputs[0].value;
-  let brightness = inputs[1].value;
-  let saturation = inputs[2].value;
+  let hue = inputs[0];
+  let brightness = inputs[1];
+  let saturation = inputs[2];
 
   let newColor = chroma(currentColor)
-    .set("hsl.h", hue)
-    .set("hsl.s", saturation)
-    .set("hsl.l", brightness);
+    .set("hsl.h", hue.value)
+    .set("hsl.s", saturation.value)
+    .set("hsl.l", brightness.value);
 
   colorDiv.style.backgroundColor = newColor;
+
+  setAdjust(newColor, hue, brightness, saturation);
 }
 
 function updateTextUI(index) {
@@ -115,6 +121,12 @@ function updateTextUI(index) {
   for (icon of icons) {
     checkDarkness(color, icon);
   }
+}
+
+function updateScroll(color, hue, brightness, saturation) {
+  hue.value = Math.floor(color.hsl()[0]);
+  saturation.value = Math.floor(color.hsl()[1] * 100) / 100;
+  brightness.value = Math.floor(color.hsl()[2] * 100) / 100;
 }
 
 setColor();
