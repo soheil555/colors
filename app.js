@@ -1,6 +1,11 @@
 //Variables
 let colorDivs = document.querySelectorAll(".color");
 let sliders = document.querySelectorAll(".adjust-center");
+let hexValues = document.querySelectorAll(".color h2");
+let copySection = document.querySelector(".copied");
+let adjustButtons = document.querySelectorAll(".adjust");
+let adjustCloses = document.querySelectorAll(".adjust-close");
+let generateBtn = document.querySelector(".generate button");
 let initialColors;
 //Event Listeners
 
@@ -10,10 +15,34 @@ sliders.forEach(slider => {
   });
 });
 
+generateBtn.addEventListener("click", setColor);
+
+adjustCloses.forEach((adjustClose, index) => {
+  adjustClose.addEventListener("click", () => {
+    sliders[index].classList.remove("active");
+  });
+});
+
+adjustButtons.forEach((adjustBtn, index) => {
+  adjustBtn.addEventListener("click", () => {
+    sliders[index].classList.toggle("active");
+  });
+});
+
 colorDivs.forEach((colorDiv, index) => {
   colorDiv.addEventListener("change", () => {
     updateTextUI(index);
   });
+});
+
+hexValues.forEach((hexValue, index) => {
+  hexValue.addEventListener("click", () => {
+    copyToClipBoard(index);
+  });
+});
+
+copySection.addEventListener("transitionend", () => {
+  copySection.classList.remove("active");
 });
 
 //Functions
@@ -127,6 +156,18 @@ function updateScroll(color, hue, brightness, saturation) {
   hue.value = Math.floor(color.hsl()[0]);
   saturation.value = Math.floor(color.hsl()[1] * 100) / 100;
   brightness.value = Math.floor(color.hsl()[2] * 100) / 100;
+}
+
+function copyToClipBoard(index) {
+  let textA = document.createElement("textarea");
+  textA.value = hexValues[index].innerText;
+
+  document.body.appendChild(textA);
+  textA.select();
+  document.execCommand("copy");
+  document.body.removeChild(textA);
+
+  copySection.classList.add("active");
 }
 
 setColor();
