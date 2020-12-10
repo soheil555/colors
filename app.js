@@ -3,10 +3,15 @@ let colorDivs = document.querySelectorAll(".color");
 let sliders = document.querySelectorAll(".adjust-center");
 let hexValues = document.querySelectorAll(".color h2");
 let copySection = document.querySelector(".copied");
+let saveBox = document.querySelector(".save-box");
 let adjustButtons = document.querySelectorAll(".adjust");
 let adjustCloses = document.querySelectorAll(".adjust-close");
 let generateBtn = document.querySelector(".generate button");
 let lockButtons = document.querySelectorAll(".lock");
+let saveButton = document.querySelector(".save button");
+let closeButton = document.querySelector(".save-close");
+let savePaletteButton = document.querySelector(".save-palette");
+let paletteNameInput = document.querySelector(".palette-name");
 let initialColors;
 
 //Event Listeners
@@ -14,6 +19,16 @@ sliders.forEach(slider => {
   slider.addEventListener("input", e => {
     changeColorSilder(e.target);
   });
+});
+
+savePaletteButton.addEventListener("click", savePalette);
+
+saveButton.addEventListener("click", () => {
+  saveBox.classList.add("active");
+});
+
+closeButton.addEventListener("click", () => {
+  saveBox.classList.remove("active");
 });
 
 lockButtons.forEach((lockBtn, index) => {
@@ -191,6 +206,30 @@ function lockColor(index) {
     lockBtn.innerHTML = '<i class="fas fa-lock"></i>';
   } else {
     lockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+  }
+}
+
+function savePalette() {
+  let palettes = undefined;
+
+  if (localStorage.getItem("palettes") == null) {
+    palettes = [];
+  } else {
+    palettes = JSON.parse(localStorage.getItem("palettes"));
+  }
+
+  let number = palettes.length;
+  let name = paletteNameInput.value.trim();
+
+  paletteNameInput.value = "";
+
+  if (name != null && name != "") {
+    let palette = { number, name, colors: initialColors };
+
+    palettes.push(palette);
+    localStorage.setItem("palettes", JSON.stringify(palettes));
+
+    saveBox.classList.remove("active");
   }
 }
 

@@ -143,7 +143,8 @@ input[type="range"]::-webkit-slider-thumb {
   margin-top: -4px;
 }
 
-.copied {
+.copied,
+.save-box {
   position: fixed;
   top: 0;
   right: 0;
@@ -159,12 +160,14 @@ input[type="range"]::-webkit-slider-thumb {
   transition: all 0.5s ease-in-out;
 }
 
-.copied.active {
+.copied.active,
+.save-box.active {
   opacity: 1;
   pointer-events: all;
 }
 
-.copied-dialog {
+.copied-dialog,
+.save-dialog {
   width: 30%;
   height: 30vh;
   background-color: white;
@@ -175,13 +178,29 @@ input[type="range"]::-webkit-slider-thumb {
   flex-direction: column;
   transform: translateY(0px);
   transition: all 0.5s ease-in;
+  position: relative;
 }
 
 .copied.active .copied-dialog {
   transform: translateY(50px);
 }
 
-.copied-dialog * {
+.copied-dialog *,
+.save-dialog * {
   font-size: 3rem;
   margin-bottom: 2rem;
+}
+
+.save-dialog button {
+  padding: 1rem;
+  background-color: rgb(189, 188, 188);
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.save-close {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
