@@ -6,12 +6,19 @@ let copySection = document.querySelector(".copied");
 let adjustButtons = document.querySelectorAll(".adjust");
 let adjustCloses = document.querySelectorAll(".adjust-close");
 let generateBtn = document.querySelector(".generate button");
+let lockButtons = document.querySelectorAll(".lock");
 let initialColors;
-//Event Listeners
 
+//Event Listeners
 sliders.forEach(slider => {
   slider.addEventListener("input", e => {
     changeColorSilder(e.target);
+  });
+});
+
+lockButtons.forEach((lockBtn, index) => {
+  lockBtn.addEventListener("click", () => {
+    lockColor(index);
   });
 });
 
@@ -49,32 +56,37 @@ copySection.addEventListener("transitionend", () => {
 function setColor() {
   initialColors = [];
 
-  colorDivs.forEach(colorDiv => {
+  colorDivs.forEach((colorDiv, index) => {
     let hexText = colorDiv.children[0];
+    let baseColor = hexText.innerText;
 
-    let randomColor = genreateColor();
-    colorDiv.style.backgroundColor = randomColor;
+    if (lockButtons[index].classList.contains("locked")) {
+      initialColors.push(baseColor);
+    } else {
+      let randomColor = genreateColor();
+      colorDiv.style.backgroundColor = randomColor;
 
-    hexText.innerHTML = randomColor;
-    let icons = colorDiv.querySelectorAll(".controls div");
+      hexText.innerHTML = randomColor;
+      let icons = colorDiv.querySelectorAll(".controls div");
 
-    for (icon of icons) {
-      checkDarkness(randomColor, icon);
+      for (icon of icons) {
+        checkDarkness(randomColor, icon);
+      }
+
+      checkDarkness(randomColor, hexText);
+
+      let color = chroma(randomColor);
+      let inputs = colorDiv.querySelectorAll("input");
+
+      initialColors.push(color.hex());
+
+      let hue = inputs[0];
+      let brightness = inputs[1];
+      let saturation = inputs[2];
+
+      setAdjust(color, hue, brightness, saturation);
+      updateScroll(color, hue, brightness, saturation);
     }
-
-    checkDarkness(randomColor, hexText);
-
-    let color = chroma(randomColor);
-    let inputs = colorDiv.querySelectorAll("input");
-
-    initialColors.push(color.hex());
-
-    let hue = inputs[0];
-    let brightness = inputs[1];
-    let saturation = inputs[2];
-
-    setAdjust(color, hue, brightness, saturation);
-    updateScroll(color, hue, brightness, saturation);
   });
 }
 
@@ -168,6 +180,18 @@ function copyToClipBoard(index) {
   document.body.removeChild(textA);
 
   copySection.classList.add("active");
+}
+
+function lockColor(index) {
+  let lockBtn = lockButtons[index];
+
+  lockBtn.classList.toggle("locked");
+
+  if (lockBtn.classList.contains("locked")) {
+    lockBtn.innerHTML = '<i class="fas fa-lock"></i>';
+  } else {
+    lockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+  }
 }
 
 setColor();
