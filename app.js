@@ -12,6 +12,11 @@ let saveButton = document.querySelector(".save button");
 let closeButton = document.querySelector(".save-close");
 let savePaletteButton = document.querySelector(".save-palette");
 let paletteNameInput = document.querySelector(".palette-name");
+let libraryButton = document.querySelector(".library button");
+let colorsLibrary = document.querySelector(".colors-library");
+let libraryCloseButton = document.querySelector(".library-close");
+let colorsBox = document.querySelector(".colors-library-box");
+let palleteSelectButtons = [];
 let initialColors;
 
 //Event Listeners
@@ -20,6 +25,26 @@ sliders.forEach(slider => {
     changeColorSilder(e.target);
   });
 });
+
+
+
+libraryCloseButton.addEventListener("click",()=>{
+
+    colorsLibrary.classList.remove("active");
+
+});
+
+libraryButton.addEventListener("click",() => {
+
+
+    console.log("hello");
+    colorsLibrary.classList.add("active");
+
+
+});
+
+
+
 
 savePaletteButton.addEventListener("click", savePalette);
 
@@ -90,20 +115,35 @@ function setColor() {
 
       checkDarkness(randomColor, hexText);
 
-      let color = chroma(randomColor);
-      let inputs = colorDiv.querySelectorAll("input");
-
-      initialColors.push(color.hex());
-
-      let hue = inputs[0];
-      let brightness = inputs[1];
-      let saturation = inputs[2];
-
-      setAdjust(color, hue, brightness, saturation);
-      updateScroll(color, hue, brightness, saturation);
     }
   });
+
+  resetInputs();
 }
+
+
+function resetInputs(){
+
+  colorDivs.forEach(colorDiv =>{
+
+
+    let color = chroma(colorDiv.children[0].innerText);
+    let inputs = colorDiv.querySelectorAll("input");
+
+    initialColors.push(color.hex());
+
+    let hue = inputs[0];
+    let brightness = inputs[1];
+    let saturation = inputs[2];
+
+    setAdjust(color, hue, brightness, saturation);
+    updateScroll(color, hue, brightness, saturation);
+
+
+  });
+
+}
+
 
 function genreateColor() {
   let randomColor = chroma.random();
@@ -231,6 +271,90 @@ function savePalette() {
 
     saveBox.classList.remove("active");
   }
+
+  addToLibrary(number,name,initialColors);
+
 }
 
+function getColorsFromLocalStorage(){
+
+  let palettes = undefined;
+
+  if (localStorage.getItem("palettes") == null) {
+    palettes = [];
+  } else {
+    palettes = JSON.parse(localStorage.getItem("palettes"));
+  }
+
+  
+  palettes.forEach((pallete) =>{
+
+
+    addToLibrary(pallete.number,pallete.name,pallete.colors);
+
+  });
+
+
+}
+
+function addToLibrary(number,name,colors){
+
+  
+      let pallete = document.createElement("div");
+      pallete.classList.add("pallete");
+
+      let palleteName = document.createElement("h2");
+      palleteName.innerText = name;
+
+
+      pallete.append(palleteName);
+
+      let palleteColors = document.createElement("div");
+      palleteColors.classList.add("pallete-colors")
+
+
+      colors.forEach(color => {
+
+          let c = document.createElement("div");
+          c.classList.add("c");
+          c.style.backgroundColor = color;
+
+          palleteColors.append(c);
+
+      });
+
+
+      let selectButton = document.createElement("button");
+      selectButton.innerText = "Select";
+      selectButton.classList.add(number);
+      palleteColors.append(selectButton);
+
+
+      selectButton.addEventListener("click",()=>{
+
+          initialColors = [];
+
+          colors.forEach((color,index) =>{
+
+              initialColors.push(color);
+              colorDivs[index].style.backgroundColor = color;
+              colorDivs[index].children[0].innerText = color;
+              updateTextUI(index);
+
+
+          });
+
+          resetInputs();
+
+      });
+
+      pallete.append(palleteColors);
+
+      colorsBox.appendChild(pallete);
+
+
+}
+
+
 setColor();
+getColorsFromLocalStorage();
